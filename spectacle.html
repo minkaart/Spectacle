@@ -1,0 +1,431 @@
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+<link rel="stylesheet" href="spectacle.css"></link>
+<style type="text/css">
+
+</style>
+
+<script type="text/javascript">
+
+jQuery(function($) {
+
+
+var text1 = "I will not make a ";
+var blink_text = "spectacle. "; 
+$('#origin').prepend(text1);
+$("#blink-text").append(blink_text);
+
+var color_list = ["#FF0099", "#FF3300", "#33FF00", "#33ffff", "#0033ff", "#fff333", "#33ccff"]; 
+
+var total_width = $(window).width();
+var last_total_width = $(window).width();
+var total_height = $(window).height();
+
+var text_width = $("#origin").width();
+var text_height = $("#origin").height();
+
+var x_ratio = Math.round(total_width/text_width);
+var y_ratio = Math.round(total_height/text_height); 
+var y_position = 0; //holds position of scrolling text divs
+var x_position = 0; //holds width of scroll-text
+
+var current_id; //target id of text currently being written (based on positioning)
+var current_delay = 0; //holds the total delay to start of final animation rendered
+var delay_increment = 4500; //holds the amount of time between animation starts
+
+var scroll_on = 1; 
+
+
+populate_vertical();
+stop_button();
+
+$(window).load(
+function(){
+	/** set scroll**/
+	//NOTE!!! Does not work in Chrome Browser. :(
+		$(window).scrollLeft(0);
+		$(window).scrollTop(0);		
+		/**set screen size**/
+		$('#screen').width(1.5*total_width);
+});
+
+$(window).scroll(
+  function(){
+  	var x_offset = $(window).scrollLeft();
+  	var y_offset = $(window).scrollTop(); 
+  	var new_total_width = total_width + x_offset;
+  	var new_total_height = total_height + y_offset;
+  	x_ratio = Math.round(new_total_width/text_width);
+  	
+/** horizontal scroll functions**/	
+	/**move text to remain out of browser window**/  
+	$(".scroll-span").css({
+		"left" : 1.25*new_total_width+"px"
+	});
+	
+	/**increase canvas size**/
+	$("#screen").width(1.5*new_total_width); 
+	
+	/**increase length of scrolling text**/
+	/**reset x_ratio**/
+	
+	if (x_ratio>x_position){
+		while (x_ratio > x_position){
+			var c_num = Math.floor(Math.random()*7); 
+			var this_color = color_list[c_num]; 
+				$(".scroll-span").append(text1+'<span class="blink" style="color:'+this_color+';">'+blink_text+"</span>");
+			x_position++; 
+		} 
+	}
+	
+
+/**vertical scroll functions**/
+	/**increase canvas size**/
+	$("#screen").height(1.25*new_total_height);
+	
+	/**append new scrolling text vertically**/	
+	if (y_offset > 0.9*y_position){
+		y_ratio = Math.floor(y_offset/text_height);
+		populate_vertical();
+	}
+	
+	$(".scroll-span").each(
+		function() {
+			var p = $(this).position();
+			if (p.top < 0.9*y_offset){
+				//$(this).css({"color":"blue"});
+				if ($(this).hasClass("scrolling")){
+					$(this).css({
+						"animation-play-state": "paused",
+						"-webkit-animation-play-state": "paused"
+					});
+				}
+				$(this).css({
+					"animation-play-state": "paused",
+					"-webkit-animation-play-state": "paused"
+				});
+			}
+			else {
+				if ($(this).hasClass("scrolling")){
+					$(this).css({
+						"animation-play-state": "running",
+						"-webkit-animation-play-state": "running"
+					});
+				}
+				$(this).css({
+					"animation-play-state": "running",
+					"-webkit-animation-play-state": "running"
+				});
+			}
+		}
+	)
+
+});
+	
+$(window).resize(
+	function(){
+	
+	/**Reset window width**/
+	total_width = $(window).width();
+	x_ratio = Math.round(total_width/text_width);
+	
+	/**Reset Canvas**/
+	$("#screen").width(1.5*total_width); 
+	
+/**horizontal adjustments**/	
+	/**move text to remain out of browser window**/  
+	$(".scroll-span").css({
+		"left" : 1.25*$("#screen").width()+"px"
+	});
+	
+	/**expand scroll-span width and append new text**/ 
+	if (x_ratio>x_position){
+		while (x_ratio > x_position){
+			var c_num = Math.floor(Math.random()*7); 
+			var this_color = color_list[c_num]; 
+		$(".scroll-span").append(text1+'<span class="blink" style="color:'+this_color+';">'+blink_text+"</span>");
+			x_position++; 
+		} 
+	}
+	
+/**vertical adjustments**/
+	/**add required scroll-spans**/	
+	if($(window).height() > total_height){
+		y_ratio = Math.floor(($(window).height() - total_height) / text_height);
+		total_height = $(window).height();
+		populate_vertical();	
+	}
+
+/**Redraw Stop Button**/
+stop_button(); 
+
+});
+
+//manual test for browser focus tested to pause on Chrome and Firefox across tabs and windows
+$(window).blur(
+	function(){
+		ani_pause(); 
+});
+
+$(window).focus(
+	function(){
+		ani_start(); 
+});
+
+/**Event handler to make stop button appear and disappear**/
+$("#stop-button")
+	.on( "mouseenter", 
+	function(){
+		$("#stop-button").css({
+			"opacity" : "1"
+			});
+		})
+	.on( "mouseleave", 
+	function(){
+		$("#stop-button").css({
+			"opacity" :"0"
+		});
+	});
+	
+$("#about-button")
+	.on( "mouseenter", 
+	function(){
+		$("#about-button").css({
+			"opacity" : "1"
+			});
+		})
+	.on( "mouseleave", 
+	function(){
+		$("#about-button").css({
+			"opacity" :"0"
+		});
+	});
+
+$("#about-button").click(
+	function(){
+		$("#about").css({
+			"opacity" : "1"
+		});
+		$("#about-button").css({
+			"opacity" :"1"
+		});
+		ani_pause(); 
+	});
+
+$("#close-button").click(
+	function(){
+		$("#about").css({
+			"opacity" : "0"
+		});
+		$("#about-button").css({
+			"opacity" :"0"
+		});
+		if (scroll_on == 0){
+			ani_start();
+		}
+	});
+
+/**Stop Button click event handler**/
+$("#stop-button").click(
+ function(){
+ if (scroll_on == 1){
+ 	ani_pause();
+ }
+ else if (scroll_on == 0) {
+ 	ani_start(); 
+ }
+ 	
+ });
+
+/**event handlers to create "drag" effect**/
+$(window).mousedown(
+	function(f){
+		$(document.body).css({
+			"cursor" : "-webkit-grabbing",
+			"cursor" : "-moz-grabbing"
+		});
+		var x_start = f.pageX;
+		var y_start = f.pageY; 
+		$(window).mousemove(
+			function(e){
+				var x_off = (x_start - e.pageX);
+				var y_off = (y_start - e.pageY); 
+				$(window).scrollTop(y_off); 
+				$(window).scrollLeft(x_off); 
+			});
+		});
+
+$(window).mouseup(
+	function (){
+	$(document.body).css({
+			"cursor" : "-webkit-grab",
+			"cursor" : "-moz-grab"
+		});
+	$(window).unbind("mousemove"); 
+});
+
+//places stop button
+function stop_button(){
+/**place stop button**/
+		tw = $(window).width();
+		$("#stop-button").css({
+			"left" : tw*0.38+"px",
+			"width" : tw*0.25+"px", 
+			"z-index": "30000"
+		});
+		
+		/** adjust button text**/ 
+		var bt_width = $("#stop-button").width();
+		
+		var fs = 17;  
+		//$("#button-text").css({"font-size": fs+"pt"});
+		var bt_text = $("#button-text").width();
+		if (bt_text>bt_width){
+		for(;bt_text>bt_width;fs--) {	
+				$("#button-text").css({
+					"font-size": fs+"pt"
+				});
+				bt_text = $("#button-text").width();
+			}
+		}
+
+}
+
+function populate_scroll(a){
+	$(a).height(text_height);
+
+	for (b=0;b<=x_ratio*2;b++){
+		var c_num = Math.floor(Math.random()*7); 
+		var this_color = color_list[c_num]; 
+		$(a).append(text1+'<span class="blink" style="color:'+this_color+';">'+blink_text+"</span>");
+	}
+}
+
+function populate_vertical(){
+	var y_increment = text_height;
+	if (x_ratio>x_position)
+		{
+			x_position = x_ratio; 
+		}
+	for (c=1;c<y_ratio;c++)
+		{
+		var id = 'scroll' + y_position;
+		var callid = '#' + id;
+		$('#screen').append('<div class="scroll-span" id="'+id+'"></div>');
+		populate_scroll(callid);
+		y_position = y_position + y_increment;  
+		scrolling(callid);
+		current_delay += delay_increment; 
+		}
+}
+
+function scrolling(id){
+	if(scroll_on == 1){	
+		$(id).css({
+			"left": 1.25*total_width+"px"
+		});
+		$(id)
+			.delay(current_delay)
+			.animate({ left: '-='+0.25*total_width }, 5000, "linear")
+			.queue(function() {
+				//$( this ).css({left: '0px'});
+      			$( this ).addClass( "scrolling" ).dequeue();
+    		})
+	}
+}
+
+
+function ani_pause(){
+		//each scroll-span which is still in jQuery animation is paused, note the queue is cleared so that it can be re-generated when the animation is restarted. 
+			$(".scroll-span").each(
+				function(){
+					$(this).stop(true);
+			})
+			//each div to which the class "scrolling" has been applied (thus has completed the jQuery "scroll-in" animation is paused.//
+			$(".scrolling").css({
+				"animation-play-state": "paused",
+				"-webkit-animation-play-state": "paused"
+			});
+			$(".blink").css({
+				"animation-play-state": "paused",
+				"-webkit-animation-play-state": "paused"
+			});
+			$("#button-text").html(
+				"RESTART <br /> Title: Contemporary Art: Catch 22 <br /> Minka Stoyanova"
+				);
+			$("#stop-button").css({
+				"height" : "60px" 
+				});
+			scroll_on = 0; 
+		}
+
+function ani_start(){
+	$("#button-text").html("STOP THE SPECTACLE");
+			$("#stop-button").css({
+				"height" : "20px" 
+				});
+			//Note: the delay cannot be cleared, but is used because setTimeout does not work as expected in this context <-- Thus, earlier animations restart later, despite resetting the delay to 0.  Problem?
+			current_delay = 0;
+			$(".scrolling").css({
+				"animation-play-state": "running",
+				"-webkit-animation-play-state": "running"
+			});
+			$(".blink").css({
+				"animation-play-state": "running",
+				"-webkit-animation-play-state": "running"
+			});
+			$(".scroll-span").each(
+				function(){
+				if ($(this).hasClass('scrolling') == false){
+					$(this)	
+						.delay(current_delay)
+						.animate({ left: '-='+0.25*total_width }, 5000, "linear")
+						.queue(function() {
+      						$( this ).addClass( "scrolling" ).dequeue();
+    					})
+    				current_delay += delay_increment; 
+				}
+			})
+			scroll_on = 1;
+}
+
+});
+
+</script>
+
+
+
+</head>
+<body>
+
+<div id="screen">
+<div id="origin"><span id="blink-text" class="blink"></span></div>
+</div>
+
+<div id="stop-button"><div id="button-text">STOP THE SPECTACLE</div></div>
+<div id="about-button">ABOUT</div>
+<div id="about"><div id="close-button">close [x]</div>
+<h1>ABOUT</h1><br />
+<bold>Title:</bold> Contemporary Art: Catch 22<br />
+<bold>Artist:</bold> Minka Stoyanova<br />
+<bold>Year:</bold> 2014<br /><br />
+
+<bold>Spectacle:</bold> a visually striking performance or display, an event or scene regarded in terms of its visual impact.<br /><br />
+
+What is "the spectacle?" For Debord, the spectacle represents the moment at which representation supersedes real experience, the image (the sign) becomes more "real" than the phenomenological truth. The spectacle is superimposed upon our experience of reality, and represents the final triumph of capitalism; the object defines the individual.  
+<br /><br />
+It is argued that our current experience is "spectacular." While global communications systems have expanded our phenomenological sphere of influence, they reduce our ability to be present.  We engage with each other through a veil that is spectacle. 
+<br /><br />
+It is through enacting spectacle that we draw attention to "the spectacle." Contemporary conceptualism denies "the spectacle" in favor of truth, or intent.  Works should challenge aesthetic or formal, objective readings and seek to interrogate the nature of being.  And yet, as we engage with the rapidly evolving technological landscape, can the new media artist control the impulse to create the spectacular?
+<br /><br />
+I will not make <br /> 
+I will not make a spectacle<br />
+I will not make a spectacle of myself<br />
+<br /><br />
+<bold>-- this work was completed during an artistic residency at VarnaLab - a hacker space - in Varna, Bulgaria.  -- </bold>
+<br /> <br /> 
+User Notes: There is a hidden button near the center top of the browser to pause the animation.  The animations are infinitely scroll-able, drag-able, and size-able.  That said, your computer's cpu is not.  :) 
+</div>
+</body>
+</html>

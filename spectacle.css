@@ -1,0 +1,157 @@
+body {
+	background-color: black; 
+	width: 100%; 
+	cursor: -moz-grab;
+	cursor: -webkit-grab; 
+}
+
+#about{
+	background-color: red;
+	width: 70%;
+	height: 80%; 
+	position: fixed; 
+	top: 50px; 
+	padding: 10pt; 
+	margin: 5pt; 
+	opacity: 1; 
+	left: 15%; 
+	font-size: 13pt;
+	overflow-x: hidden; 
+	overflow-y: scroll;
+}
+
+#close-button{
+	float: right; 
+	cursor: pointer; 
+	font-weight: bold; 
+}
+
+#about-button{
+	z-index: 30000; 
+	top: 20px;
+	left: 20px; 
+	text-align: center;  
+	background-color: red;
+	position: fixed;
+	vertical-align: middle; 
+	opacity: 0;  
+	cursor: pointer; 
+	padding: 10pt; 
+	font-size: 20pt; 
+	font-weight: bold; 
+	font-family: "Arial", "sans-serif";
+}
+
+#stop-button {
+	z-index: 30000; 
+	top: 75px; 
+	height: 20px; 
+	text-align: center;  
+	background-color: #66FF33;
+	overflow-x: hidden;
+	overflow-y: hidden; 
+	position: fixed;
+	vertical-align: middle; 
+	opacity: 0;  
+	cursor: pointer; 
+	padding: 5pt; 
+ 		-webkit-border-radius: 10px;
+ 		-moz-border-radius: 10px;
+ 		-o-border-radius: 10px;
+ 		-ms-border-radius: 10px;
+ 		-khtml-border-radius: 10px;
+ 		border-radius: 10px;
+}
+
+#button-text {
+	z-index: 30001;
+	vertical-align: middle; 
+	color: #333333;
+	font-weight: bold; 
+	font-family: "Arial", "sans-serif";
+	position: relative;
+	display: inline-block; 
+	/**top: 30%; **/
+}
+
+.scroll-span {
+	font-family: "arial", "sans-serif";
+	font-size: 14pt;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	position: relative;
+	left: 100%;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+}
+
+.scrolling { 
+	animation: marquee 18s ease infinite;
+	-webkit-animation: marquee 18s ease infinite;
+	position: relative;
+	animation-play-state: running;
+	-webkit-animation-play-state: running;
+}
+
+#origin {
+	font-family: "arial", "sans-serif";
+	font-size: 14pt;
+	display: none;
+}
+
+#screen {
+	background-color: black;
+	color: white; 
+	position: relative;
+	height: 120%; 
+	left: -25%;
+	top: 0px; 
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+
+.blink{
+	font-weight: bold;
+	animation: blinker 1s linear infinite;
+	-webkit-animation: blinker 2s linear infinite;
+	animation-play-state: running;
+	-webkit-animation-play-state: running;
+}
+
+@keyframes blinker{
+	0% {opacity: 0;
+	}
+	50% {opacity: 1;
+	}
+	100% {opacity: 0;
+	}
+}
+
+@-webkit-keyframes blinker{
+	0% {opacity: 0;
+	}
+	50% {opacity: 1;
+	}
+	100% {opacity: 0;
+	}
+}
+
+@keyframes marquee {
+    0%   {left: -10%; }
+    25%	 {left: 0%; }
+    50%	 {left: 10%; }
+    75%   {left: 0%; }
+    100% {left: -10%; }
+}
+
+@-webkit-keyframes marquee {
+    0%   {left: -10%; }
+    25%	 {left: 0%; }
+    50%	 {left: 10%; }
+    75%   {left: 0%; }
+    100% {left: -10%; }
+}
